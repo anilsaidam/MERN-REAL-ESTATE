@@ -1,26 +1,39 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   signInStart,
   signInSuccess,
   signInFailure,
+  clearError
 } from '../redux/user/userSlice';
+import OAuth from '../components/OAuth';
 
 export default function SignIn() {
   const [formData, setFormData] = useState({});
   const { loading, error } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(clearError());
+  }, [dispatch]);
+
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.id]: e.target.value,
     });
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      if (!formData.email || !formData.password) {
+        dispatch(signInFailure('Please fill in all fields'));
+        return;
+      }
+
       dispatch(signInStart());
       const res = await fetch('/api/auth/signin', {
         method: 'POST',
@@ -29,23 +42,21 @@ export default function SignIn() {
         },
         body: JSON.stringify(formData),
       });
-      const data = await res.json();
-      console.log(data);
       
-      if (data.success === false) {
-        dispatch(signInFailure(data.message));
+      const data = await res.json();
+      
+      if (!res.ok) {
+        dispatch(signInFailure(data.message || 'Authentication failed'));
         return;
       }
       
       dispatch(signInSuccess(data));
-      // Only navigate if we have successful authentication
-      if (data._id) {
-        navigate('/');
-      }
+      navigate('/');
     } catch (error) {
       dispatch(signInFailure(error.message));
     }
   };
+
   return (
     <div className='p-3 max-w-lg mx-auto'>
       <h1 className='text-3xl text-center font-semibold my-7'>Sign In</h1>
@@ -56,6 +67,7 @@ export default function SignIn() {
           className='border p-3 rounded-lg'
           id='email'
           onChange={handleChange}
+          required
         />
         <input
           type='password'
@@ -63,6 +75,7 @@ export default function SignIn() {
           className='border p-3 rounded-lg'
           id='password'
           onChange={handleChange}
+          required
         />
 
         <button
@@ -71,9 +84,10 @@ export default function SignIn() {
         >
           {loading ? 'Loading...' : 'Sign In'}
         </button>
+        <OAuth/>
       </form>
       <div className='flex gap-2 mt-5'>
-        <p>Dont have an account?</p>
+        <p>Don't have an account?</p>
         <Link to={'/sign-up'}>
           <span className='text-blue-700'>Sign up</span>
         </Link>
