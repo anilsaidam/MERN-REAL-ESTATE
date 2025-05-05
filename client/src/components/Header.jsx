@@ -4,16 +4,12 @@ import { useSelector } from 'react-redux';
 
 export default function Header() {
   const { currentUser } = useSelector((state) => state.user);
-  
-  // Strict check - only show profile if currentUser exists with valid _id
-  const showProfile = currentUser && currentUser._id;
-
   return (
     <header className='bg-slate-200 shadow-md'>
       <div className='flex justify-between items-center max-w-6xl mx-auto p-3'>
         <Link to='/'>
           <h1 className='font-bold text-sm sm:text-xl flex flex-wrap'>
-            <span className='text-slate-500'>FindPeace</span>
+            <span className='text-slate-500'>Find Peace</span>
             <span className='text-slate-700'>Estate</span>
           </h1>
         </Link>
@@ -36,17 +32,12 @@ export default function Header() {
               About
             </li>
           </Link>
-          <Link to={showProfile ? '/profile' : '/sign-in'}>
-            <li className='text-slate-700 hover:underline'>
-              {showProfile ? (
-                <img 
-                  className='rounded-full h-7 w-7 object-cover' 
-                  src={currentUser.avatar} 
-                  alt='profile'
-                  key={currentUser._id} // Forces re-render and prevents caching
-                />
-              ) : 'Sign in'}
-            </li>
+          <Link to='/profile'>
+            {currentUser ? (
+              <img className='rounded-full h-7 w-7 object-cover' src={currentUser.avatar} alt='profile' />
+            ) : (
+              <li className=' text-slate-700 hover:underline'> Sign in</li>
+            )}
           </Link>
         </ul>
       </div>

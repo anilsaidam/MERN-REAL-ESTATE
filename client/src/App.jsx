@@ -1,7 +1,4 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { clearAuthState } from './redux/user/userSlice';
 import Home from './pages/Home';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/Signup';
@@ -11,22 +8,6 @@ import Header from './components/Header';
 import PrivateRoute from './components/PrivateRoute';
 
 export default function App() {
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(clearAuthState());
-    
-    const handleBeforeUnload = () => {
-      dispatch(clearAuthState());
-    };
-    
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, [dispatch]);
-
   return (
     <BrowserRouter>
       <Header />
