@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  signInStart,
-  signInSuccess,
+import { 
+  signInStart, 
+  signInSuccess, 
   signInFailure,
-  clearError
+  clearAuthState
 } from '../redux/user/userSlice';
 import OAuth from '../components/OAuth';
 
@@ -16,7 +16,7 @@ export default function SignIn() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(clearError());
+    dispatch(clearAuthState()); // Clear any existing state
   }, [dispatch]);
 
   const handleChange = (e) => {
@@ -46,7 +46,7 @@ export default function SignIn() {
       const data = await res.json();
       
       if (!res.ok) {
-        dispatch(signInFailure(data.message || 'Authentication failed'));
+        dispatch(signInFailure(data.message));
         return;
       }
       

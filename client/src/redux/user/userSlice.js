@@ -1,33 +1,35 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    currentUser: null,
-    error: null,  // Initialize error as null
-    loading: false,
+  currentUser: null,
+  error: null,
+  loading: false,
 };
 
 const userSlice = createSlice({
-    name: 'user',
-    initialState,
-    reducers: {
-        signInStart: (state) => {
-            state.loading = true;
-            state.error = null;  // Clear errors when starting new attempt
-        },
-        signInSuccess: (state, action) => {
-            state.currentUser = action.payload;
-            state.loading = false;
-            state.error = null;
-        },
-        signInFailure: (state, action) => {
-            state.error = action.payload;
-            state.loading = false;
-        },
-        clearError: (state) => {
-            state.error = null;  // Add clearError reducer
-        }
+  name: 'user',
+  initialState,
+  reducers: {
+    signInStart: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    signInSuccess: (state, action) => {
+      state.currentUser = action.payload;
+      state.loading = false;
+      state.error = null;
+    },
+    signInFailure: (state, action) => {
+      state.error = action.payload;
+      state.loading = false;
+    },
+    clearAuthState: (state) => {
+      state.currentUser = null;
+      state.error = null;
+      state.loading = false;
     }
+  }
 });
 
-export const { signInStart, signInSuccess, signInFailure, clearError } = userSlice.actions;
+export const { signInStart, signInSuccess, signInFailure, clearAuthState } = userSlice.actions;
 export default userSlice.reducer;
